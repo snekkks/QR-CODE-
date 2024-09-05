@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        input, textarea {
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+        #qrcode {
+            margin-top: 20px;
+        }
+        button {
+            margin-top: 10px;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+</head>
+<body>
+    <h1>QR Code Generator</h1>
+    <form id="dataForm">
+        <label for="username">Username:</label>
+        <input type="text" id="username" placeholder="Enter username">
+        
+        <label for="department">Department:</label>
+        <input type="text" id="department" placeholder="Enter department">
+        
+        <label for="hostname">Hostname:</label>
+        <input type="text" id="hostname" placeholder="Enter hostname">
+        
+        <label for="make">Make:</label>
+        <input type="text" id="make" placeholder="Enter make">
+        
+        <label for="model">Model:</label>
+        <input type="text" id="model" placeholder="Enter model">
+        
+        <label for="modelNumber">Model Number:</label>
+        <input type="text" id="modelNumber" placeholder="Enter model number">
+        
+        <label for="monitorServiceTag">Monitor Service Tag:</label>
+        <input type="text" id="monitorServiceTag" placeholder="Enter monitor service tag">
+        
+        <label for="pcServiceTag">Service Tag:</label>
+        <input type="text" id="pcServiceTag" placeholder="Enter PC service tag">
+        
+        <label for="os">OS:</label>
+        <input type="text" id="os" placeholder="Enter OS">
+        
+        <label for="processor">Processor:</label>
+        <input type="text" id="processor" placeholder="Enter processor">
+        
+        <label for="ram">RAM:</label>
+        <input type="text" id="ram" placeholder="Enter RAM">
+        
+        <label for="rom">ROM:</label>
+        <input type="text" id="rom" placeholder="Enter ROM">
+        
+        <label for="office">Office:</label>
+        <input type="text" id="office" placeholder="Enter office">
+        
+        <label for="officeId">Office ID:</label>
+        <input type="email" id="officeId" placeholder="Enter office ID">
+        
+        <label for="otherSoftware">Other Software:</label>
+        <textarea id="otherSoftware" rows="4" placeholder="Enter other software"></textarea>
+        
+        <label for="hoDate">H/O Date:</label>
+        <input type="date" id="hoDate">
+        
+        <label for="vendor">Vendor:</label>
+        <input type="text" id="vendor" placeholder="Enter vendor">
+        
+        <label for="purchaseDate">Purchase Date:</label>
+        <input type="date" id="purchaseDate">
+        
+        <label for="ownRental">Own/Rental:</label>
+        <input type="text" id="ownRental" placeholder="Enter own or rental">
+        
+        <label for="rentalPhase">Rental Phase:</label>
+        <input type="text" id="rentalPhase" placeholder="Enter rental phase">
+        
+        <label for="location">Location:</label>
+        <input type="text" id="location" placeholder="Enter location">
+        
+        <label for="warranty">Warranty:</label>
+        <input type="date" id="warranty">
+        
+        <label for="otherAccessories">Other Accessories:</label>
+        <textarea id="otherAccessories" rows="4" placeholder="Enter other accessories"></textarea>
+        
+        <label for="deviceType">Device Type:</label>
+        <input type="text" id="deviceType" placeholder="Enter device type">
+        
+        <button type="button" id="generateButton">Generate QR Code</button>
+    </form>
+    
+    <div id="qrcode"></div>
+    <button id="downloadButton" style="display:none;">Download QR Code</button>
+    
+    <script>
+        $(document).ready(function() {
+            $('#generateButton').click(function() {
+                // Gather form data
+                var formData = {
+                    Username: $('#username').val(),
+                    Department: $('#department').val(),
+                    Hostname: $('#hostname').val(),
+                    Make: $('#make').val(),
+                    Model: $('#model').val(),
+                    Model_Number: $('#modelNumber').val(),
+                    Monitor_Service_Tag: $('#monitorServiceTag').val(),
+                    Service_Tag: $('#pcServiceTag').val(),
+                    OS: $('#os').val(),
+                    Processor: $('#processor').val(),
+                    RAM: $('#ram').val(),
+                    ROM: $('#rom').val(),
+                    Office: $('#office').val(),
+                    Office_Id: $('#officeId').val(),
+                    Other_Software: $('#otherSoftware').val(),
+                    Handover_Date: $('#hoDate').val(),
+                    Vendor: $('#vendor').val(),
+                    Purchase_Date: $('#purchaseDate').val(),
+                    Own_or_Rental: $('#ownRental').val(),
+                    Rental_Phase: $('#rentalPhase').val(),
+                    Location: $('#location').val(),
+                    Warranty: $('#warranty').val(),
+                    Other_Accesories: $('#otherAccessories').val(),
+                    Device_Type: $('#deviceType').val()
+                };
+                
+                // Convert form data to a string
+                var combinedData = Object.keys(formData).map(function(key) {
+                    return key.charAt(0).toUpperCase() + key.slice(1) + ': ' + formData[key];
+                }).join('\n');
+                
+                // Clear previous QR code
+                $('#qrcode').empty();
+                
+                // Generate QR code
+                try {
+                    QRCode.toCanvas(document.createElement('canvas'), combinedData, {
+                        width: 256,
+                        color: {
+                            dark: '#000000',
+                            light: '#ffffff'
+                        }
+                    }, function (error, canvas) {
+                        if (error) {
+                            console.error('Error generating QR code:', error);
+                            alert('Error generating QR code');
+                            return;
+                        }
+                        
+                        // Append the canvas to the QR code div
+                        $('#qrcode').append(canvas);
+                        
+                        // Show the download button
+                        $('#downloadButton').show();
+                    });
+                } catch (error) {
+                    console.error('Exception:', error);
+                    alert('Exception occurred while generating QR code');
+                }
+            });
+
+            $('#downloadButton').click(function() {
+                var canvas = $('#qrcode canvas')[0];
+                if (canvas) {
+                    var image = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
+                    
+                    var link = document.createElement('a');
+                    link.href = image;
+                    link.download = 'qrcode.png';
+                    link.click();
+                } else {
+                    alert('No QR code to download');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
